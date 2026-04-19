@@ -1,0 +1,4 @@
+flask
+openai
+watchdog
+python-dotenv

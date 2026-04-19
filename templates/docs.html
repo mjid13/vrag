@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VRAG - Documents</title>
+    <style>
+        :root {
+            --bg: #0f0f13;
+            --surface: #1a1a24;
+            --surface-2: #232330;
+            --border: #2a2a3a;
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.25);
+            --text: #e8e8ef;
+            --text-dim: #8888a0;
+            --success: #00cec9;
+            --danger: #ff6b6b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent), #a855f7);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--text-dim);
+            font-weight: 400;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--text);
+            border-color: var(--accent);
+            background: var(--surface-2);
+        }
+
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 48px 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        .upload-zone.dragover {
+            transform: scale(1.01);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .upload-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 16px;
+            background: var(--surface-2);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--accent);
+        }
+
+        .upload-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .upload-sub {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .upload-sub strong {
+            color: var(--accent);
+            cursor: pointer;
+        }
+
+        .upload-formats {
+            margin-top: 12px;
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .format-tag {
+            font-size: 11px;
+            background: var(--surface-2);
+            color: var(--text-dim);
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #file-input { display: none; }
+
+        /* Section header */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-count {
+            background: var(--surface-2);
+            color: var(--text-dim);
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 400;
+        }
+
+        .refresh-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .refresh-btn:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        /* File list */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .file-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.2s;
+        }
+
+        .file-item:hover {
+            border-color: #3a3a4a;
+            background: var(--surface-2);
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .file-icon.pdf { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
+        .file-icon.txt { background: rgba(52, 152, 219, 0.15); color: #3498db; }
+        .file-icon.md { background: rgba(46, 204, 113, 0.15); color: #2ecc71; }
+        .file-icon.docx { background: rgba(52, 73, 235, 0.15); color: #3449eb; }
+        .file-icon.html { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
+        .file-icon.json { background: rgba(241, 196, 15, 0.15); color: #f1c40f; }
+        .file-icon.other { background: var(--surface-2); color: var(--text-dim); }
+
+        .file-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-meta {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .indexed-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .indexed-badge.yes {
+            background: rgba(0, 206, 201, 0.12);
+            color: var(--success);
+        }
+
+        .indexed-badge.no {
+            background: rgba(255, 107, 107, 0.12);
+            color: var(--danger);
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 107, 107, 0.12);
+            color: var(--danger);
+        }
+
+        .delete-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-dim);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* Upload progress */
+        .upload-progress {
+            display: none;
+            margin-bottom: 16px;
+        }
+
+        .upload-progress.active { display: block; }
+
+        .progress-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .progress-item .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .progress-item.done .spinner {
+            border-color: var(--success);
+            border-top-color: var(--success);
+            animation: none;
+        }
+
+        .progress-item.error { border-color: rgba(255, 107, 107, 0.3); }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">V</div>
+            <div class="logo-text">VRAG <span>Documents</span></div>
+        </div>
+        <a href="/" class="back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4-4 4-4h12a2 2 0 0 1 2 2z"/></svg>
+            Back to Chat
+        </a>
+    </header>
+
+    <div class="container">
+        <!-- Upload zone -->
+        <div class="upload-zone" id="upload-zone">
+            <div class="upload-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+            </div>
+            <div class="upload-title">Drop files here or <strong onclick="document.getElementById('file-input').click()">browse</strong></div>
+            <div class="upload-sub">Files are automatically indexed for search</div>
+            <div class="upload-formats">
+                <span class="format-tag">PDF</span>
+                <span class="format-tag">TXT</span>
+                <span class="format-tag">MD</span>
+                <span class="format-tag">DOCX</span>
+                <span class="format-tag">HTML</span>
+                <span class="format-tag">JSON</span>
+            </div>
+        </div>
+        <input type="file" id="file-input" multiple accept=".pdf,.txt,.md,.docx,.html,.json">
+
+        <!-- Upload progress -->
+        <div class="upload-progress" id="upload-progress"></div>
+
+        <!-- File list -->
+        <div class="section-header">
+            <div class="section-title">
+                Indexed Files
+                <span class="file-count" id="file-count">0</span>
+            </div>
+            <button class="refresh-btn" onclick="loadFiles()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                Refresh
+            </button>
+        </div>
+        <div class="file-list" id="file-list"></div>
+    </div>
+
+    <script>
+        const uploadZone = document.getElementById('upload-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+        const fileCount = document.getElementById('file-count');
+        const uploadProgress = document.getElementById('upload-progress');
+
+        function getExtension(name) {
+            const parts = name.split('.');
+            return parts.length > 1 ? parts.pop().toLowerCase() : '';
+        }
+
+        function getIconClass(ext) {
+            return ['pdf','txt','md','docx','html','json'].includes(ext) ? ext : 'other';
+        }
+
+        // Drag & drop
+        ['dragenter','dragover'].forEach(e => {
+            uploadZone.addEventListener(e, (ev) => {
+                ev.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave','drop'].forEach(e => {
+            uploadZone.addEventListener(e, (ev) => {
+                ev.preventDefault();
+                uploadZone.classList.remove('dragover');
+            });
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length) uploadFiles(files);
+        });
+
+        uploadZone.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'STRONG') fileInput.click();
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) uploadFiles(fileInput.files);
+            fileInput.value = '';
+        });
+
+        async function uploadFiles(files) {
+            uploadProgress.classList.add('active');
+
+            for (const file of files) {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+                item.innerHTML = '<div class="spinner"></div><span>Uploading ' + escapeHtml(file.name) + '...</span>';
+                uploadProgress.prepend(item);
+
+                const form = new FormData();
+                form.append('file', file);
+
+                try {
+                    const res = await fetch('/docs/upload', { method: 'POST', body: form });
+                    const data = await res.json();
+                    if (data.error) {
+                        item.classList.add('error');
+                        item.querySelector('span').textContent = file.name + ' — ' + data.error;
+                    } else {
+                        item.classList.add('done');
+                        item.querySelector('span').textContent = file.name + ' uploaded';
+                    }
+                } catch {
+                    item.classList.add('error');
+                    item.querySelector('span').textContent = file.name + ' — upload failed';
+                }
+            }
+
+            setTimeout(() => {
+                uploadProgress.innerHTML = '';
+                uploadProgress.classList.remove('active');
+            }, 3000);
+
+            loadFiles();
+        }
+
+        async function loadFiles() {
+            try {
+                const res = await fetch('/docs/list');
+                const data = await res.json();
+                renderFiles(data.files);
+            } catch {
+                fileList.innerHTML = '<div class="empty-state"><p>Could not load files</p></div>';
+            }
+        }
+
+        function renderFiles(files) {
+            fileCount.textContent = files.length;
+
+            if (!files.length) {
+                fileList.innerHTML = '<div class="empty-state"><p>No documents yet. Upload files to get started.</p></div>';
+                return;
+            }
+
+            fileList.innerHTML = files.map(f => {
+                const ext = getExtension(f.name);
+                return `
+                    <div class="file-item">
+                        <div class="file-icon ${getIconClass(ext)}">${ext || '?'}</div>
+                        <div class="file-info">
+                            <div class="file-name">${escapeHtml(f.name)}</div>
+                            <div class="file-meta">
+                                <span>${f.size}</span>
+                                <span class="indexed-badge ${f.indexed ? 'yes' : 'no'}">
+                                    ${f.indexed ? 'Indexed' : 'Not indexed'}
+                                </span>
+                            </div>
+                        </div>
+                        <button class="delete-btn" title="Delete" onclick="deleteFile('${escapeHtml(f.name)}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>`;
+            }).join('');
+        }
+
+        async function deleteFile(name) {
+            if (!confirm('Delete "' + name + '"? This will also remove it from the vector store.')) return;
+
+            try {
+                await fetch('/docs/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name }),
+                });
+                loadFiles();
+            } catch {
+                alert('Failed to delete file');
+            }
+        }
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        // Initial load
+        loadFiles();
+    </script>
+</body>
+</html>
